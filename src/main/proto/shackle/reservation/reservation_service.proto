@@ -1,0 +1,81 @@
+/*
+ * Shackle Reservation Service
+ * Provides a stream of new reservations, as they happen.
+ *
+ * Public container with an implementation:
+ * docker run -tp 127.0.0.1:8080:8080/tcp exploreshackle/reservation-service:latest
+ */
+
+syntax = "proto3";
+
+package shackle.reservation;
+
+option java_package = "com.exploreshackle.api.reservation.v1";
+
+/*
+ * Reservation service, and its single RPC that responds with a stream of reservations.
+ * The response stream is infinite. It will provide an endless flow of new reservations.
+ */
+service ReservationService {
+  rpc StreamReservations(StreamReservationsRequest) returns (stream Reservation);
+}
+
+/*
+ * The request message is empty. There are no request parameters to the service.
+ */
+message StreamReservationsRequest {
+}
+
+/*
+ * A hotel reservation.
+ */
+message Reservation {
+  /* Timestamp the reservation was received. */
+  int64 timestamp = 1;
+
+  /* The internal identifier of the reservation; always present. */
+  int64 internal_id = 2;
+
+  /* The booking confirmation number; this is present for direct bookings with the hotel. */
+  string booking_confirmation_number = 3;
+
+  /* Confirmation code that is present for online bookings;
+   * the guest receives this code in the confirmation message from the booking engine.
+   */
+  string web_confirmation_code = 4;
+
+  /* Travel agent confirmation code; only present for travel agent bookings.
+   * The guest may have received the confirmation code from their agent.
+   */
+  string travel_agent_confirmation_code = 5;
+
+  /* Guest details */
+  GuestDetails guest_details = 10;
+
+  /* Arrival date */
+  LocalDate arrival_date = 11;
+  /* Departure date */
+  LocalDate departure_date = 12;
+}
+
+message LocalDate {
+  int32 year = 1;
+  int32 month = 2;
+  int32 day = 3;
+}
+
+message GuestDetails {
+  string first_name = 1;
+  string last_name = 2;
+  string title = 3;
+
+  string phone_number = 11;
+  string email = 12;
+
+  string address = 21;
+  string city = 22;
+  string postal_code = 23;
+  string country = 24;
+
+  string company_name = 31;
+}

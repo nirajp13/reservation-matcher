@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package shackle.checkin;
+
+option java_package = "com.exploreshackle.api.checkin.v1";
+
+message CheckinRequest {
+  string confirmation_number = 1;
+}
+
+message CheckinResponse {
+  optional CheckinConfirmation confirmation = 1;
+  optional CheckinError error = 2;
+}
+
+message CheckinConfirmation {
+  int64 reservation_id = 1;
+}
+
+message CheckinError {
+  string reason = 1;
+}
+
+service CheckinService {
+  rpc checkin(CheckinRequest) returns (CheckinResponse);
+}
